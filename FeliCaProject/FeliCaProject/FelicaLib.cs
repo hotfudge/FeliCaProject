@@ -105,7 +105,7 @@ namespace FelicaLib
             felicap = felica_polling(pasorip, (ushort)systemcode, 0, 0);
             if (felicap == IntPtr.Zero)
             {
-                throw new Exception("カード読み取り失敗");
+                //throw new Exception("カード読み取り失敗");
             }
         }
 

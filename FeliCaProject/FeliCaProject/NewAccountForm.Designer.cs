@@ -81,6 +81,7 @@
             // 
             this.InputIdmTextBox.Location = new System.Drawing.Point(82, 32);
             this.InputIdmTextBox.Name = "InputIdmTextBox";
+            this.InputIdmTextBox.ReadOnly = true;
             this.InputIdmTextBox.Size = new System.Drawing.Size(184, 19);
             this.InputIdmTextBox.TabIndex = 4;
             // 

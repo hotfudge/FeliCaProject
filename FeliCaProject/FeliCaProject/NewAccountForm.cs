@@ -20,6 +20,7 @@ namespace FeliCaProject
 
         private void NewAccount_Load(object sender, EventArgs e)
         {
+            textBoxFormat();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
@@ -37,10 +38,18 @@ namespace FeliCaProject
         private void InputCreateButton_Click(object sender, EventArgs e)
         {
             Connector newAccount = new Connector();
+            int result;
             if (InputIdmTextBox.Text.Trim() != "" && InputGradeTextBox.Text.Trim() != "" && InputNameTextBox.Text.Trim() != "" && InputStudentidTextBox.Text.Trim() != "")
             {
-
-                newAccount.createNewAccount(InputIdmTextBox.Text, InputNameTextBox.Text, InputStudentidTextBox.Text,int.Parse(InputGradeTextBox.Text));
+                if (int.TryParse(InputGradeTextBox.Text, out result))
+                {
+                    newAccount.createNewAccount(InputIdmTextBox.Text, InputNameTextBox.Text, InputStudentidTextBox.Text, int.Parse(InputGradeTextBox.Text));
+                    textBoxFormat();
+                }
+                else
+                {
+                    MessageBox.Show( InputGradeTextBox.Text + "は不正な値です。");
+                }
             }  
             else
             {
@@ -49,6 +58,10 @@ namespace FeliCaProject
         }
         private void textBoxFormat()
         {
+            InputGradeTextBox.Text = "";
+            InputIdmTextBox.Text = "";
+            InputNameTextBox.Text = "";
+            InputStudentidTextBox.Text = "";
         }
     }
 }

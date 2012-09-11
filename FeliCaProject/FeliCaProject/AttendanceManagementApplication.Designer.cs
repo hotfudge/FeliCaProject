@@ -43,10 +43,7 @@
             this.StudentidLabel = new System.Windows.Forms.Label();
             this.NewaccountButton = new System.Windows.Forms.Button();
             this.CheckAttendanceButton = new System.Windows.Forms.Button();
-            this.GetIDmButton = new System.Windows.Forms.Button();
-            this.IntimeButon = new System.Windows.Forms.Button();
             this.OuttimeButton = new System.Windows.Forms.Button();
-            this.ClockTimer = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.ClockToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -56,6 +53,9 @@
             this.dataBaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.createTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DropTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.IDmTick = new System.Windows.Forms.Timer(this.components);
+            this.ClockTick = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -201,27 +201,6 @@
             this.CheckAttendanceButton.Text = "Check Attendance";
             this.CheckAttendanceButton.UseVisualStyleBackColor = true;
             // 
-            // GetIDmButton
-            // 
-            this.GetIDmButton.Font = new System.Drawing.Font("MS UI Gothic", 20F);
-            this.GetIDmButton.Location = new System.Drawing.Point(292, 299);
-            this.GetIDmButton.Name = "GetIDmButton";
-            this.GetIDmButton.Size = new System.Drawing.Size(244, 152);
-            this.GetIDmButton.TabIndex = 14;
-            this.GetIDmButton.Text = "GetIDm";
-            this.GetIDmButton.UseVisualStyleBackColor = true;
-            this.GetIDmButton.Click += new System.EventHandler(this.GetIDmButton_Click);
-            // 
-            // IntimeButon
-            // 
-            this.IntimeButon.Font = new System.Drawing.Font("MS UI Gothic", 20F);
-            this.IntimeButon.Location = new System.Drawing.Point(573, 299);
-            this.IntimeButon.Name = "IntimeButon";
-            this.IntimeButon.Size = new System.Drawing.Size(222, 63);
-            this.IntimeButon.TabIndex = 15;
-            this.IntimeButon.Text = "In Time";
-            this.IntimeButon.UseVisualStyleBackColor = true;
-            // 
             // OuttimeButton
             // 
             this.OuttimeButton.Font = new System.Drawing.Font("MS UI Gothic", 20F);
@@ -231,10 +210,6 @@
             this.OuttimeButton.TabIndex = 16;
             this.OuttimeButton.Text = "Out Time";
             this.OuttimeButton.UseVisualStyleBackColor = true;
-            // 
-            // ClockTimer
-            // 
-            this.ClockTimer.Tick += new System.EventHandler(this.ClockTimer_Tick);
             // 
             // statusStrip1
             // 
@@ -283,13 +258,13 @@
             this.configToolStripMenuItem.Name = "configToolStripMenuItem";
             this.configToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
             this.configToolStripMenuItem.Text = "Config";
-            this.configToolStripMenuItem.Click += new System.EventHandler(this.configToolStripMenuItem_Click);
             // 
             // dataBaseToolStripMenuItem
             // 
             this.dataBaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createTableToolStripMenuItem,
-            this.DropTableToolStripMenuItem});
+            this.DropTableToolStripMenuItem,
+            this.showTableToolStripMenuItem});
             this.dataBaseToolStripMenuItem.Name = "dataBaseToolStripMenuItem";
             this.dataBaseToolStripMenuItem.Size = new System.Drawing.Size(76, 22);
             this.dataBaseToolStripMenuItem.Text = "DataBase";
@@ -297,16 +272,32 @@
             // createTableToolStripMenuItem
             // 
             this.createTableToolStripMenuItem.Name = "createTableToolStripMenuItem";
-            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.createTableToolStripMenuItem.Text = "CreateTable";
             this.createTableToolStripMenuItem.Click += new System.EventHandler(this.createTableToolStripMenuItem_Click);
             // 
             // DropTableToolStripMenuItem
             // 
             this.DropTableToolStripMenuItem.Name = "DropTableToolStripMenuItem";
-            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.DropTableToolStripMenuItem.Text = "DropTable";
             this.DropTableToolStripMenuItem.Click += new System.EventHandler(this.showTableToolStripMenuItem_Click);
+            // 
+            // showTableToolStripMenuItem
+            // 
+            this.showTableToolStripMenuItem.Name = "showTableToolStripMenuItem";
+            this.showTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.showTableToolStripMenuItem.Text = "ShowTable";
+            // 
+            // IDmTick
+            // 
+            this.IDmTick.Interval = 500;
+            this.IDmTick.Tick += new System.EventHandler(this.IDmTick_Tick);
+            // 
+            // ClockTick
+            // 
+            this.ClockTick.Interval = 200;
+            this.ClockTick.Tick += new System.EventHandler(this.ClockTick_Tick);
             // 
             // AttendanceManagementApplicationForm
             // 
@@ -317,8 +308,6 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.OuttimeButton);
-            this.Controls.Add(this.IntimeButon);
-            this.Controls.Add(this.GetIDmButton);
             this.Controls.Add(this.CheckAttendanceButton);
             this.Controls.Add(this.NewaccountButton);
             this.Controls.Add(this.StudentidLabel);
@@ -362,10 +351,7 @@
         private System.Windows.Forms.Label StudentidLabel;
         private System.Windows.Forms.Button NewaccountButton;
         private System.Windows.Forms.Button CheckAttendanceButton;
-        private System.Windows.Forms.Button GetIDmButton;
-        private System.Windows.Forms.Button IntimeButon;
         private System.Windows.Forms.Button OuttimeButton;
-        private System.Windows.Forms.Timer ClockTimer;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel ClockToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
@@ -375,6 +361,9 @@
         private System.Windows.Forms.ToolStripMenuItem dataBaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createTableToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem DropTableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showTableToolStripMenuItem;
+        private System.Windows.Forms.Timer IDmTick;
+        private System.Windows.Forms.Timer ClockTick;
     }
 }
 
