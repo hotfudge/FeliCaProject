@@ -65,12 +65,6 @@
       <DependentUpon>AttendanceManagementApplication.cs</DependentUpon>
     </Compile>
     <Compile Include="GetIDm.cs" />
-    <Compile Include="InMessage.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InMessage.Designer.cs">
-      <DependentUpon>InMessage.cs</DependentUpon>
-    </Compile>
     <Compile Include="NewAccountForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,9 +90,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CreateDatabaseForm.resx">
       <DependentUpon>CreateDatabaseForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InMessage.resx">
-      <DependentUpon>InMessage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewAccountForm.resx">
       <DependentUpon>NewAccountForm.cs</DependentUpon>
@@ -128,6 +119,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

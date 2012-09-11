@@ -10,12 +10,15 @@ using getidm;
 using connectorMySQL;
 using MySql.Data.MySqlClient;
 using MySql.Data;
+using System.Media;
 using System.Threading;
 
 namespace FeliCaProject
 {
     public partial class AttendanceManagementApplicationForm : Form
     {
+        private SoundPlayer sound = null;
+
         public AttendanceManagementApplicationForm()
         {
             InitializeComponent();
@@ -57,16 +60,16 @@ namespace FeliCaProject
             newAccountForm.Dispose();
             IDmTick.Start();
         }
-
         private void IDmTick_Tick(object sender, EventArgs e)
         {
-
-
+            messageBoxFormat();
+            IDmTick.Interval = 200;
             string idm,time;
             GetIDm getidm = new GetIDm();
             idm = getidm.getID();
             if (idm != null)
             {
+                PlaySound("../../Audio/botan_b45.wav");
                 IDmTick.Stop();
                 IdmRichTextBox.Text = idm;
                 string dataName, dataStudentid, dataGrade;
@@ -82,8 +85,10 @@ namespace FeliCaProject
                     Connector nowTime = new Connector();
                     time = nowTime.getTimeNow();
                     IntimeRichTextBox.Text = time;
+                    IDmTick.Interval = 3000;
+                    IDmTick.Start();
+
                 }
-                IDmTick.Start();
             }
 
         }
@@ -102,6 +107,10 @@ namespace FeliCaProject
             DateTime dt = DateTime.Now;
             ClockToolStripStatusLabel.Text = dt.ToString();
         }
-
+        private void PlaySound(string waveFile)
+        {
+            sound = new SoundPlayer(waveFile);
+            sound.Play();
+        }
     }
 }

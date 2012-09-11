@@ -230,7 +230,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(800, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(769, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // menuStrip1
