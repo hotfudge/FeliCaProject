@@ -1,6 +1,6 @@
 ﻿namespace FeliCaProject
 {
-    partial class CreateDatabaseForm
+    partial class CreateTableForm
     {
         /// <summary>
         /// Required designer variable.

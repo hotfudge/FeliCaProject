@@ -53,29 +53,28 @@ namespace connectorMySQL
             }
         }
         /// <summary>
-        /// Mysqlのコマンドに変換するメソッド(Create)
-        /// *後に改変予定*
+        /// テーブルを作成するメソッド
         /// </summary>
         /// <param name="tableName">Createするテーブル名</param>
         /// <param name="columm">Createするカラム</param>
         /// <param name="primaryKey">設定するPRIMARY KEY</param>
-        public void MysqlCreateTable(string tableName,string columm,string primaryKey)
+        public void createTable(string tableName, string columm, string primaryKey)
         {
-            tableSql = "CREATE TABLE " + tableName + "(" + columm + "," + "PRIMARY KEY(" + primaryKey + "));";
-        }
-
-        public void MysqlCreateTable(string tableName, string columm)
-        {
-            tableSql = "CREATE TABLE " + tableName + "(" + columm + ");";
-        }
-        /// <summary>
-        /// テーブルを作成するメソッド
-        /// </summary>
-        public void createTable()
-        {
-            Connector.Connect("root", "root");
-            connect.ChangeDatabase("felica");
-            MySqlCommand command = new MySqlCommand(tableSql,connect);
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
+            string commandStr;
+            if (primaryKey.Trim() != "")
+            {
+                commandStr = "CREATE TABLE " + tableName + "(" + columm + "," + "PRIMARY KEY(" + primaryKey + "));";
+            }
+            else
+            {
+                commandStr = "CREATE TABLE " + tableName + "(" + columm + ");";
+            }
+            MySqlCommand command = new MySqlCommand(commandStr,connect);
             try
             {
                 command.ExecuteNonQuery();
@@ -97,8 +96,11 @@ namespace connectorMySQL
         /// <param name="tableName">dropするテーブルの名前</param>
         public void dropTables(string tableName)
         {
-            Connector.Connect("root", "root");
-            connect.ChangeDatabase("felica");
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
             tableSql = "DROP TABLE " + tableName + ";";
             MySqlCommand command = new MySqlCommand(tableSql, connect);
             try
@@ -125,9 +127,12 @@ namespace connectorMySQL
         /// <param name="grades">学年</param>
         public void createNewAccount(string idms, string names, string studentids, int grades)
         {
-            Connector.Connect("root", "root");
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
             string commandStr;
-            connect.ChangeDatabase("felica");
             /*文字列をINSERTする時には''で囲まなければならない*/
             commandStr = "INSERT INTO userinfo(idm,name,studentid,grade) VALUES('" + idms + "','" + names + "','" + studentids + "'," + grades + ");";
             MessageBox.Show(commandStr);
@@ -164,8 +169,11 @@ namespace connectorMySQL
         /// <returns></returns>
         public static bool userInfoDisp(DataTable dataTable,string idm)
         {
-            Connector.Connect("root", "root");
-            connect.ChangeDatabase("felica");
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
             string commandStr = "SELECT * FROM userinfo WHERE idm ='" + idm + "';";
 
             try
@@ -186,41 +194,16 @@ namespace connectorMySQL
 
         }
         /// <summary>
-        /// Mysqlの時間を取得するメソッド
-        /// </summary>
-        /// <returns>時間</returns>
-        public string getTimeNow()
-        {
-            string nowTime;
-            string commandStr = "SELECT now();";
-            Connector.Connect("root", "root");
-            DataTable dataTable = new DataTable();
-            try
-            {
-                MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
-                adapt.Fill(dataTable);
-                nowTime = dataTable.Rows[0][0].ToString();
-                return nowTime;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return null;
-            }
-            finally
-            {
-                ConnectClose();
-            }
-
-        }
-        /// <summary>
         /// 入退出の時間をMysqlに格納するメソッド
         /// </summary>
         /// <param name="idm">idm</param>
         public void entryTime(string idm)
         {
-            Connector.Connect("root", "root");
-            connect.ChangeDatabase("felica");
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
             string commandStr = "SELECT * FROM entrytime WHERE idm ='" + idm + "';";
             DataTable dataTable = new DataTable();
             try
@@ -251,12 +234,34 @@ namespace connectorMySQL
                         ConnectClose();
                     }
                 }
+                else if (dataTable.Rows[0][1].ToString().Trim() != "" && dataTable.Rows[0][2].ToString().Trim() == "")
+                {
+                    commandStr = "UPDATE entrytime SET outtime = now() WHERE idm = '" + idm + "';";
+                    MySqlCommand command = new MySqlCommand(commandStr, connect);
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    finally
+                    {
+                        ConnectClose();
+                    }
+                }
             }
             else
             {
                 MessageBox.Show("アカウント登録がされていないカード又は読み込みエラーです");
             }
         }
+        /// <summary>
+        /// ShowTableメニューからテーブルを閲覧するために用いるメソッド
+        /// </summary>
+        /// <param name="commandStr">MySQLコマンド</param>
+        /// <param name="dataTable">テーブルのデータを格納する変数</param>
         public static void tableReader(string commandStr,DataTable dataTable)
         {
 
@@ -266,10 +271,37 @@ namespace connectorMySQL
             {
                 adapt.Fill(dataTable);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            finally
+            {
+                ConnectClose();
+            }
+        }
+        public void getEntryTimeTable(string idm,DataTable getTimeDataTable)
+        {
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                connect.ChangeDatabase("felica");
+            }
+            string commandStr = "SELECT intime,outtime FROM entrytime WHERE idm = '" + idm + "';";
+            MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
+            try
+            {
+                adapt.Fill(getTimeDataTable);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                ConnectClose();
+            }
+
         }
     }
 }

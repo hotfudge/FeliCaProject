@@ -10,9 +10,9 @@ using connectorMySQL;
 
 namespace FeliCaProject
 {
-    public partial class CreateDatabaseForm : Form
+    public partial class CreateTableForm : Form
     {
-        public CreateDatabaseForm()
+        public CreateTableForm()
         {
             InitializeComponent();
         }
@@ -28,21 +28,11 @@ namespace FeliCaProject
 
         private void TableCreateButton_Click(object sender, EventArgs e)
         {
-            if (TableNameTextBox.Text.Trim() != "" && SetColummTextBox.Text.Trim() != "" && PrimaryKeyTextBox.Text.Trim() != "")
+            Connector tableCreate = new Connector();
+            tableCreate.createTable(TableNameTextBox.Text, SetColummTextBox.Text, PrimaryKeyTextBox.Text);
+            if((TableNameTextBox.Text.Trim() == "" || SetColummTextBox.Text.Trim() == ""))
             {
-                Connector tableCreate = new Connector();
-                tableCreate.MysqlCreateTable(TableNameTextBox.Text, SetColummTextBox.Text, PrimaryKeyTextBox.Text);
-                tableCreate.createTable();
-            }
-            else if (TableNameTextBox.Text != "" && SetColummTextBox.Text.Trim() != "" && PrimaryKeyTextBox.Text.Trim() == "")
-            {
-                Connector tableCreate = new Connector();
-                tableCreate.MysqlCreateTable(TableNameTextBox.Text, SetColummTextBox.Text);
-                tableCreate.createTable();
-            }
-            else
-            {
-                MessageBox.Show("値が有効ではありません");
+                MessageBox.Show("未入力があります。");
                 textBoxFormat();
             }
         }

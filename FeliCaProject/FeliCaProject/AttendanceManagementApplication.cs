@@ -52,7 +52,7 @@ namespace FeliCaProject
         private void createTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IDmTick.Stop();
-            CreateDatabaseForm createDatabaseForm = new CreateDatabaseForm();
+            CreateTableForm createDatabaseForm = new CreateTableForm();
             this.AddOwnedForm(createDatabaseForm);
             createDatabaseForm.ShowDialog(this);
             createDatabaseForm.Dispose();
@@ -101,7 +101,7 @@ namespace FeliCaProject
             GetIDm getidm = new GetIDm();
             idm = getidm.getID();
             //idmが空でない & 前回とidmが同じではなけれは処理開始
-            if (idm != null && (compareStr(idm) == false))
+            if (idm != null)
             {
                 PlaySound("../../Audio/botan_b45.wav");
                 IDmTick.Stop();
@@ -125,7 +125,7 @@ namespace FeliCaProject
                 {
                     if (dataTable.Rows.Count != 0)
                     {
-                        string time;
+//                        string time;
                         string dataName, dataStudentid, dataGrade;
                         dataName = dataTable.Rows[0][1].ToString();
                         dataStudentid = dataTable.Rows[0][2].ToString();
@@ -134,34 +134,21 @@ namespace FeliCaProject
                         StudentidRichTextBox.Text = dataStudentid;
                         GradeRichTextBox.Text = dataGrade;
                         Connector nowTime = new Connector();
-                        time = nowTime.getTimeNow();
-                        IntimeRichTextBox.Text = time;
+                        DataTable getTimeDataTable = new DataTable();
+                        nowTime.getEntryTimeTable(idm, getTimeDataTable);
+                        OuttimeRichTextBox.Text = getTimeDataTable.Rows[0][1].ToString();
+                        IntimeRichTextBox.Text = getTimeDataTable.Rows[0][0].ToString();
+ //                       time = nowTime.getTimeNow();
+ //                       IntimeRichTextBox.Text = time;
                     }
                     else if (dataTable.Rows.Count == 0)
                     {
                         messageBoxFormat();
                     }
-                    IDmTick.Interval = 2000;
+                    IDmTick.Interval = 3000;
                     IDmTick.Start();
                 }
             }
-        }
-        /// <summary>
-        /// 1度前に取得したIDmと比較し同じIDmかどうか判断するメソッド
-        /// </summary>
-        private static string compareIdm;
-        public bool compareStr(string idm)
-        {
-            if (compareIdm == idm)
-            {
-                return true;
-            }
-            else
-            {
-                compareIdm = idm;
-                return false;
-            }
-
         }
         /// <summary>
         /// メッセージボックス内のテキストをフォーマットするメソッド

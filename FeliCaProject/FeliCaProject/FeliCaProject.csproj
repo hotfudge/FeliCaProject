@@ -50,11 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateDatabaseForm.cs">
+    <Compile Include="CreateTableForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateDatabaseForm.Designer.cs">
-      <DependentUpon>CreateDatabaseForm.cs</DependentUpon>
+    <Compile Include="CreateTableForm.Designer.cs">
+      <DependentUpon>CreateTableForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ConnectorMySQL.cs" />
     <Compile Include="FelicaLib.cs" />
@@ -88,8 +88,8 @@
     <EmbeddedResource Include="AttendanceManagementApplication.resx">
       <DependentUpon>AttendanceManagementApplication.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CreateDatabaseForm.resx">
-      <DependentUpon>CreateDatabaseForm.cs</DependentUpon>
+    <EmbeddedResource Include="CreateTableForm.resx">
+      <DependentUpon>CreateTableForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewAccountForm.resx">
       <DependentUpon>NewAccountForm.cs</DependentUpon>
