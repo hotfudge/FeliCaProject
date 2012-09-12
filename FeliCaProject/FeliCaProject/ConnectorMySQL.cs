@@ -135,6 +135,16 @@ namespace connectorMySQL
             try
             {
                 command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            commandStr = "INSERT INTO entrytime(idm) VALUES('" + idms + "');";
+            MySqlCommand commandTime = new MySqlCommand(commandStr, connect);
+            try
+            {
+                commandTime.ExecuteNonQuery();
                 MessageBox.Show("Create Account Success!!");
             }
             catch (Exception ex)
@@ -192,7 +202,7 @@ namespace connectorMySQL
                 nowTime = dataTable.Rows[0][0].ToString();
                 return nowTime;
             }
-            catch (IndexOutOfRangeException ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 return null;
@@ -202,6 +212,39 @@ namespace connectorMySQL
                 ConnectClose();
             }
 
+        }
+        public void entryTime(string idm)
+        {
+            Connector.Connect("root", "root");
+            connect.ChangeDatabase("felica");
+            string commandStr = "SELECT * FROM entrytime WHERE idm ='" + idm + "';";
+            DataTable dataTable = new DataTable();
+            try
+            {
+                MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
+                adapt.Fill(dataTable);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            if (dataTable.Rows[0][1].ToString().Trim() == "")
+            {
+                commandStr = "UPDATE entrytime SET intime = now() WHERE idm = '" + idm + "';";
+                MySqlCommand command = new MySqlCommand(commandStr,connect);
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    ConnectClose();
+                }
+            }
         }
     }
 }
