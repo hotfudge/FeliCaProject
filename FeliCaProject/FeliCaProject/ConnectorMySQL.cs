@@ -213,6 +213,10 @@ namespace connectorMySQL
             }
 
         }
+        /// <summary>
+        /// 入退出の時間をMysqlに格納するメソッド
+        /// </summary>
+        /// <param name="idm">idm</param>
         public void entryTime(string idm)
         {
             Connector.Connect("root", "root");
@@ -228,22 +232,43 @@ namespace connectorMySQL
             {
                 MessageBox.Show(ex.Message);
             }
-            if (dataTable.Rows[0][1].ToString().Trim() == "")
+            if (dataTable.Rows.Count != 0)
             {
-                commandStr = "UPDATE entrytime SET intime = now() WHERE idm = '" + idm + "';";
-                MySqlCommand command = new MySqlCommand(commandStr,connect);
-                try
+                if (dataTable.Rows[0][1].ToString().Trim() == "")
                 {
-                    command.ExecuteNonQuery();
+                    commandStr = "UPDATE entrytime SET intime = now() WHERE idm = '" + idm + "';";
+                    MySqlCommand command = new MySqlCommand(commandStr, connect);
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    finally
+                    {
+                        ConnectClose();
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    ConnectClose();
-                }
+            }
+            else
+            {
+                MessageBox.Show("アカウント登録がされていないカード又は読み込みエラーです");
+            }
+        }
+        public static void tableReader(string commandStr,DataTable dataTable)
+        {
+
+            MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr,connect);
+            connect.ChangeDatabase("felica");
+            try
+            {
+                adapt.Fill(dataTable);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

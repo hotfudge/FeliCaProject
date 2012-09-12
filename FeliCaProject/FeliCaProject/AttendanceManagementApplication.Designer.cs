@@ -43,7 +43,6 @@
             this.StudentidLabel = new System.Windows.Forms.Label();
             this.NewaccountButton = new System.Windows.Forms.Button();
             this.CheckAttendanceButton = new System.Windows.Forms.Button();
-            this.OuttimeButton = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.ClockToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -201,16 +200,6 @@
             this.CheckAttendanceButton.Text = "Check Attendance";
             this.CheckAttendanceButton.UseVisualStyleBackColor = true;
             // 
-            // OuttimeButton
-            // 
-            this.OuttimeButton.Font = new System.Drawing.Font("MS UI Gothic", 20F);
-            this.OuttimeButton.Location = new System.Drawing.Point(573, 388);
-            this.OuttimeButton.Name = "OuttimeButton";
-            this.OuttimeButton.Size = new System.Drawing.Size(222, 63);
-            this.OuttimeButton.TabIndex = 16;
-            this.OuttimeButton.Text = "Out Time";
-            this.OuttimeButton.UseVisualStyleBackColor = true;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -230,7 +219,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(769, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(800, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // menuStrip1
@@ -272,22 +261,23 @@
             // createTableToolStripMenuItem
             // 
             this.createTableToolStripMenuItem.Name = "createTableToolStripMenuItem";
-            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.createTableToolStripMenuItem.Text = "CreateTable";
             this.createTableToolStripMenuItem.Click += new System.EventHandler(this.createTableToolStripMenuItem_Click);
             // 
             // DropTableToolStripMenuItem
             // 
             this.DropTableToolStripMenuItem.Name = "DropTableToolStripMenuItem";
-            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.DropTableToolStripMenuItem.Text = "DropTable";
-            this.DropTableToolStripMenuItem.Click += new System.EventHandler(this.showTableToolStripMenuItem_Click);
+            this.DropTableToolStripMenuItem.Click += new System.EventHandler(this.dropTableToolStripMenuItem_Click);
             // 
             // showTableToolStripMenuItem
             // 
             this.showTableToolStripMenuItem.Name = "showTableToolStripMenuItem";
-            this.showTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.showTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.showTableToolStripMenuItem.Text = "ShowTable";
+            this.showTableToolStripMenuItem.Click += new System.EventHandler(this.showTableToolStripMenuItem_Click);
             // 
             // IDmTick
             // 
@@ -307,7 +297,6 @@
             this.ClientSize = new System.Drawing.Size(815, 483);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.OuttimeButton);
             this.Controls.Add(this.CheckAttendanceButton);
             this.Controls.Add(this.NewaccountButton);
             this.Controls.Add(this.StudentidLabel);
@@ -324,6 +313,7 @@
             this.Controls.Add(this.IDmLabel);
             this.MaximizeBox = false;
             this.Name = "AttendanceManagementApplicationForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AttendanceManagementApplication";
             this.Load += new System.EventHandler(this.AttendanceManagementApplicationForm_Load);
             this.statusStrip1.ResumeLayout(false);
@@ -351,7 +341,6 @@
         private System.Windows.Forms.Label StudentidLabel;
         private System.Windows.Forms.Button NewaccountButton;
         private System.Windows.Forms.Button CheckAttendanceButton;
-        private System.Windows.Forms.Button OuttimeButton;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel ClockToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;

@@ -35,6 +35,15 @@ namespace FeliCaProject
             ClockTick.Enabled = true;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
+        private void showTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            IDmTick.Stop();
+            ShowTableForm showTableForm = new ShowTableForm();
+            this.AddOwnedForm(showTableForm);
+            showTableForm.ShowDialog(this);
+            showTableForm.Dispose();
+            IDmTick.Start();
+        }
         /// <summary>
         /// テーブル作成
         /// </summary>
@@ -50,11 +59,11 @@ namespace FeliCaProject
             IDmTick.Start();
         }
         /// <summary>
-        /// テーブルを閲覧（未実装）
+        /// テーブル削除
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void showTableToolStripMenuItem_Click(object sender, EventArgs e)
+        private void dropTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IDmTick.Stop();
             DropTablesForm dropTablesForm = new DropTablesForm();
@@ -91,39 +100,49 @@ namespace FeliCaProject
             string idm;
             GetIDm getidm = new GetIDm();
             idm = getidm.getID();
+            //idmが空でない & 前回とidmが同じではなけれは処理開始
             if (idm != null && (compareStr(idm) == false))
             {
                 PlaySound("../../Audio/botan_b45.wav");
                 IDmTick.Stop();
+                //idmが一致した人の入出時間を入れる
                 timeDataSet.entryTime(idm);
+                //Hash化して生IDを表示するのを防ぐ
                 byte[] idmEncodeUtf8 = Encoding.UTF8.GetBytes(idm);
                 System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                 byte[] idmHash = md5.ComputeHash(idmEncodeUtf8);
                 int hashCount;
                 string dispHashIdm = "";
+                /*枠いっぱいに表示するためには7が調度良い*/
                 for (hashCount = 0; hashCount < 7; hashCount++)
                 {
                     dispHashIdm += idmHash[hashCount];
                 }
                 IdmRichTextBox.Text = dispHashIdm;
+                /*IDmから照合し、取得したデータをメインフォームに表示*/
                 DataTable dataTable = new DataTable();
-                
                 if (Connector.userInfoDisp(dataTable, idm) == true)
                 {
-                    string time;
-                    string dataName, dataStudentid, dataGrade;
-                    dataName = dataTable.Rows[0][1].ToString();
-                    dataStudentid = dataTable.Rows[0][2].ToString();
-                    dataGrade = dataTable.Rows[0][3].ToString();
-                    NameRichTextBox.Text = dataName;
-                    StudentidRichTextBox.Text = dataStudentid;
-                    GradeRichTextBox.Text = dataGrade;
-                    Connector nowTime = new Connector();
-                    time = nowTime.getTimeNow();
-                    IntimeRichTextBox.Text = time;
-                    IDmTick.Interval = 3000;
+                    if (dataTable.Rows.Count != 0)
+                    {
+                        string time;
+                        string dataName, dataStudentid, dataGrade;
+                        dataName = dataTable.Rows[0][1].ToString();
+                        dataStudentid = dataTable.Rows[0][2].ToString();
+                        dataGrade = dataTable.Rows[0][3].ToString();
+                        NameRichTextBox.Text = dataName;
+                        StudentidRichTextBox.Text = dataStudentid;
+                        GradeRichTextBox.Text = dataGrade;
+                        Connector nowTime = new Connector();
+                        time = nowTime.getTimeNow();
+                        IntimeRichTextBox.Text = time;
+                    }
+                    else if (dataTable.Rows.Count == 0)
+                    {
+                        messageBoxFormat();
+                    }
+                    IDmTick.Interval = 2000;
                     IDmTick.Start();
-
                 }
             }
         }
@@ -174,6 +193,6 @@ namespace FeliCaProject
             SoundPlayer sound = new SoundPlayer(waveFile);
             sound.Play();
         }
-        
+
     }
 }
