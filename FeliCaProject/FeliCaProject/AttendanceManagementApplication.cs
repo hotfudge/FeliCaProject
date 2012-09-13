@@ -111,21 +111,20 @@ namespace FeliCaProject
                 byte[] idmEncodeUtf8 = Encoding.UTF8.GetBytes(idm);
                 System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                 byte[] idmHash = md5.ComputeHash(idmEncodeUtf8);
-                int hashCount;
-                string dispHashIdm = "";
-                /*枠いっぱいに表示するためには7が調度良い*/
-                for (hashCount = 0; hashCount < 7; hashCount++)
+                StringBuilder hashStrData = new StringBuilder();
+                foreach (byte hashData in idmHash)
                 {
-                    dispHashIdm += idmHash[hashCount];
+                    hashStrData.Append(hashData.ToString("X"));
                 }
-                IdmRichTextBox.Text = dispHashIdm;
+                int hashDatacount;
+                for()
+                IdmRichTextBox.Text = hashStrData.ToString();
                 /*IDmから照合し、取得したデータをメインフォームに表示*/
                 DataTable dataTable = new DataTable();
                 if (Connector.userInfoDisp(dataTable, idm) == true)
                 {
                     if (dataTable.Rows.Count != 0)
                     {
-//                        string time;
                         string dataName, dataStudentid, dataGrade;
                         dataName = dataTable.Rows[0][1].ToString();
                         dataStudentid = dataTable.Rows[0][2].ToString();
@@ -138,8 +137,6 @@ namespace FeliCaProject
                         nowTime.getEntryTimeTable(idm, getTimeDataTable);
                         OuttimeRichTextBox.Text = getTimeDataTable.Rows[0][1].ToString();
                         IntimeRichTextBox.Text = getTimeDataTable.Rows[0][0].ToString();
- //                       time = nowTime.getTimeNow();
- //                       IntimeRichTextBox.Text = time;
                     }
                     else if (dataTable.Rows.Count == 0)
                     {
@@ -180,6 +177,7 @@ namespace FeliCaProject
             SoundPlayer sound = new SoundPlayer(waveFile);
             sound.Play();
         }
+
 
     }
 }

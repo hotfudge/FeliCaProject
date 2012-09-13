@@ -63,5 +63,6 @@ namespace FeliCaProject
             InputNameTextBox.Text = "";
             InputStudentidTextBox.Text = "";
         }
+
     }
 }

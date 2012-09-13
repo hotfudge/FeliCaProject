@@ -26,7 +26,11 @@ namespace FeliCaProject
         {
             this.Close();
         }
-
+        /// <summary>
+        /// テーブルのドロップ開始ボタンのメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DatabaseDropButton_Click(object sender, EventArgs e)
         {
             if (DropTableTextBox.Text.Trim() != "")
@@ -42,6 +46,9 @@ namespace FeliCaProject
             }
 
         }
+        /// <summary>
+        /// フォームのテキストフォーマット
+        /// </summary>
         private void textBoxFormat()
         {
             DropTableTextBox.Text = "";

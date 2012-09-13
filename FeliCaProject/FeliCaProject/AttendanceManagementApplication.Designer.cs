@@ -261,21 +261,21 @@
             // createTableToolStripMenuItem
             // 
             this.createTableToolStripMenuItem.Name = "createTableToolStripMenuItem";
-            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.createTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.createTableToolStripMenuItem.Text = "CreateTable";
             this.createTableToolStripMenuItem.Click += new System.EventHandler(this.createTableToolStripMenuItem_Click);
             // 
             // DropTableToolStripMenuItem
             // 
             this.DropTableToolStripMenuItem.Name = "DropTableToolStripMenuItem";
-            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.DropTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.DropTableToolStripMenuItem.Text = "DropTable";
             this.DropTableToolStripMenuItem.Click += new System.EventHandler(this.dropTableToolStripMenuItem_Click);
             // 
             // showTableToolStripMenuItem
             // 
             this.showTableToolStripMenuItem.Name = "showTableToolStripMenuItem";
-            this.showTableToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.showTableToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.showTableToolStripMenuItem.Text = "ShowTable";
             this.showTableToolStripMenuItem.Click += new System.EventHandler(this.showTableToolStripMenuItem_Click);
             // 

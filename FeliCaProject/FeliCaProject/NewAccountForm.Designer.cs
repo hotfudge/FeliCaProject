@@ -39,6 +39,8 @@
             this.InputIdmButton = new System.Windows.Forms.Button();
             this.InputCreateButton = new System.Windows.Forms.Button();
             this.InputCancelButton = new System.Windows.Forms.Button();
+            this.nameExampleLabel = new System.Windows.Forms.Label();
+            this.studentidExampleLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // InputIdmLabel
@@ -137,11 +139,31 @@
             this.InputCancelButton.UseVisualStyleBackColor = true;
             this.InputCancelButton.Click += new System.EventHandler(this.InputCancelButton_Click);
             // 
+            // nameExampleLabel
+            // 
+            this.nameExampleLabel.AutoSize = true;
+            this.nameExampleLabel.Location = new System.Drawing.Point(405, 157);
+            this.nameExampleLabel.Name = "nameExampleLabel";
+            this.nameExampleLabel.Size = new System.Drawing.Size(138, 12);
+            this.nameExampleLabel.TabIndex = 11;
+            this.nameExampleLabel.Text = "※(例) TOMOYA IBARAGI";
+            // 
+            // studentidExampleLabel
+            // 
+            this.studentidExampleLabel.AutoSize = true;
+            this.studentidExampleLabel.Location = new System.Drawing.Point(181, 157);
+            this.studentidExampleLabel.Name = "studentidExampleLabel";
+            this.studentidExampleLabel.Size = new System.Drawing.Size(85, 12);
+            this.studentidExampleLabel.TabIndex = 12;
+            this.studentidExampleLabel.Text = "※(例) H109013";
+            // 
             // NewAccountForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(607, 238);
+            this.Controls.Add(this.studentidExampleLabel);
+            this.Controls.Add(this.nameExampleLabel);
             this.Controls.Add(this.InputCancelButton);
             this.Controls.Add(this.InputCreateButton);
             this.Controls.Add(this.InputIdmButton);
@@ -175,5 +197,7 @@
         private System.Windows.Forms.Button InputIdmButton;
         private System.Windows.Forms.Button InputCreateButton;
         private System.Windows.Forms.Button InputCancelButton;
+        private System.Windows.Forms.Label nameExampleLabel;
+        private System.Windows.Forms.Label studentidExampleLabel;
     }
 }

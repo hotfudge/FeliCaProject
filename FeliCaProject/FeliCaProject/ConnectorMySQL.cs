@@ -25,7 +25,6 @@ namespace connectorMySQL
         {
             string connectionSting = string.Format("server={0};user id={1};password={2};database=mysql;pooling=false","localhost",user,password);
             connect = new MySqlConnection(connectionSting);
-
             try
             {
                 connect.Open();
@@ -280,6 +279,11 @@ namespace connectorMySQL
                 ConnectClose();
             }
         }
+        /// <summary>
+        /// INTIME・OUTTIMEをデータベースからテーブルに格納するメソッド
+        /// </summary>
+        /// <param name="idm">カードから取得したidm</param>
+        /// <param name="getTimeDataTable">データベースから取得した時間を格納するテーブル</param>
         public void getEntryTimeTable(string idm,DataTable getTimeDataTable)
         {
             bool connectBool = Connector.Connect("root", "root");

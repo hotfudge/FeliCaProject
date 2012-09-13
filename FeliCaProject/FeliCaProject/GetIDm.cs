@@ -11,7 +11,10 @@ namespace getidm
     {
         string id;
 
-        /*IDm取得メソッド*/
+        /// <summary>
+        /// IDm取得メソッド
+        /// </summary>
+        /// <returns></returns>
         public string getID()
         {
             try

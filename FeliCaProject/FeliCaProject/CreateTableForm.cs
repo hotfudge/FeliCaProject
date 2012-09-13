@@ -16,7 +16,11 @@ namespace FeliCaProject
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// フォーム読み込み時の処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AttendanceManagementSoftwareForm2_Load(object sender, EventArgs e)
         {
             textBoxFormat();
@@ -25,7 +29,11 @@ namespace FeliCaProject
             SetColumToolTip.SetToolTip(SetColummTextBox, "カラムを,で区切って入力してください\n例)id INT(11),title VARCHAR(64)");
             PrimaryKeyToolTip.SetToolTip(PrimaryKeyTextBox, "主キーがある場合記述してください");
         }
-
+        /// <summary>
+        /// テーブルを作るのに必要な値の入力を行うメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TableCreateButton_Click(object sender, EventArgs e)
         {
             Connector tableCreate = new Connector();
@@ -36,13 +44,20 @@ namespace FeliCaProject
                 textBoxFormat();
             }
         }
+        /// <summary>
+        /// フォームのテキストボックスをフォーマットするメソッド
+        /// </summary>
         private void textBoxFormat()
         {
             TableNameTextBox.Text = "";
             SetColummTextBox.Text = "";
             PrimaryKeyTextBox.Text = "";
         }
-
+        /// <summary>
+        /// キャンセルボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CreateTableCancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
