@@ -133,11 +133,16 @@ namespace connectorMySQL
             }
             string commandStr;
             /*文字列をINSERTする時には''で囲まなければならない*/
-            commandStr = "INSERT INTO userinfo(idm,name,studentid,grade) VALUES('" + idms + "','" + names + "','" + studentids + "'," + grades + ");";
+            commandStr = "INSERT INTO userinfo(idm,name,studentid,grade) VALUES (@idms,@names,@studentids,@grades);";
             MessageBox.Show(commandStr);
             MySqlCommand command = new MySqlCommand(commandStr, connect);
             try
             {
+                AddMysqlParameter(command, "@idms", MySqlDbType.VarChar, idms);
+                AddMysqlParameter(command, "@names", MySqlDbType.VarChar, names);
+                AddMysqlParameter(command, "@studentids", MySqlDbType.VarChar, studentids);
+                AddMysqlParameter(command, "@grades", MySqlDbType.Int32, grades);
+
                 command.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -203,10 +208,12 @@ namespace connectorMySQL
             {
                 connect.ChangeDatabase("felica");
             }
-            string commandStr = "SELECT * FROM entrytime WHERE idm ='" + idm + "';";
+            string commandStr = "SELECT * FROM entrytime WHERE idm =@idm;";
+            MySqlCommand paramCommand = new MySqlCommand(commandStr, connect);
             DataTable dataTable = new DataTable();
             try
             {
+                AddMysqlParameter(paramCommand, "@idms", MySqlDbType.VarChar, idm);
                 MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
                 adapt.Fill(dataTable);
             }
@@ -307,5 +314,16 @@ namespace connectorMySQL
             }
 
         }
+        public void AddMysqlParameter(
+            MySqlCommand com,string ParameterName,MySqlDbType type,Object value)
+        {
+            MySqlParameter param = com.CreateParameter();
+            param.ParameterName = ParameterName;
+            param.MySqlDbType = type;
+            param.Direction = ParameterDirection.Input;
+            param.Value = value;
+            com.Parameters.Add(param);
+        }
+
     }
 }

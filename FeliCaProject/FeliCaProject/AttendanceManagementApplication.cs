@@ -114,10 +114,8 @@ namespace FeliCaProject
                 StringBuilder hashStrData = new StringBuilder();
                 foreach (byte hashData in idmHash)
                 {
-                    hashStrData.Append(hashData.ToString("X"));
+                    hashStrData.Append(hashData.ToString("X2"));
                 }
-                int hashDatacount;
-                for()
                 IdmRichTextBox.Text = hashStrData.ToString();
                 /*IDmから照合し、取得したデータをメインフォームに表示*/
                 DataTable dataTable = new DataTable();
