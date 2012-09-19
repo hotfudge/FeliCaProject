@@ -9,9 +9,8 @@ using System.Windows.Forms;
 using getidm;
 using connectorMySQL;
 using MySql.Data.MySqlClient;
-using MySql.Data;
 using System.Media;
-using System.Threading;
+
 
 namespace FeliCaProject
 {
@@ -32,7 +31,7 @@ namespace FeliCaProject
         private void AttendanceManagementApplicationForm_Load(object sender, EventArgs e)
         {
             IDmTick.Enabled = true;
-            ClockTick.Enabled = true;
+            //ClockTick.Enabled = true;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
         private void showTableToolStripMenuItem_Click(object sender, EventArgs e)
@@ -94,55 +93,70 @@ namespace FeliCaProject
         private void IDmTick_Tick(object sender, EventArgs e)
         {
             
-            Connector timeDataSet = new Connector();
             //messageBoxFormat();
-            IDmTick.Interval = 200;
+            IDmTick.Interval = 3000;
             string idm;
             GetIDm getidm = new GetIDm();
             idm = getidm.getID();
-            //idmが空でない & 前回とidmが同じではなけれは処理開始
+            //idmが空でなければ
             if (idm != null)
             {
                 PlaySound("../../Audio/botan_b45.wav");
                 IDmTick.Stop();
-                //idmが一致した人の入出時間を入れる
-                timeDataSet.entryTime(idm);
-                //Hash化して生IDを表示するのを防ぐ
-                byte[] idmEncodeUtf8 = Encoding.UTF8.GetBytes(idm);
-                System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-                byte[] idmHash = md5.ComputeHash(idmEncodeUtf8);
-                StringBuilder hashStrData = new StringBuilder();
-                foreach (byte hashData in idmHash)
+                Connector checkIdmConnect = new Connector();
+                bool idmExist;
+                idmExist = checkIdmConnect.checkIdmExist(idm);
+                checkIdmConnect.Dispose();
+                if (idmExist == true)
                 {
-                    hashStrData.Append(hashData.ToString("X2"));
+                    //idmが一致した人の入出時間を入れる
+                    using (Connector entryTimeConnect = new Connector())
+                    {
+                        entryTimeConnect.entryTime(idm);
+                        entryTimeConnect.Dispose();
+                        //Hash化して生IDを表示するのを防ぐ
+                        byte[] idmEncodeUtf8 = Encoding.UTF8.GetBytes(idm);
+                        System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                        byte[] idmHash = md5.ComputeHash(idmEncodeUtf8);
+                        StringBuilder hashStrData = new StringBuilder();
+                        foreach (byte hashData in idmHash)
+                        {
+                            hashStrData.Append(hashData.ToString("X2"));
+                        }
+                        IdmRichTextBox.Text = hashStrData.ToString();
+                        /*IDmから照合し、取得したデータをメインフォームに表示*/
+                        MySqlDataReader dataReader = null;
+                        Connector dataReadConnect = new Connector();
+                        dataReader = dataReadConnect.userInfoDisp(dataReader, idm);
+                        if (dataReader == null)
+                        {
+                            messageBoxFormat();
+                            //dataReader.Dispose();　初期値がnullであるためdataReaderがnullだった場合Disposeできない（そもそもインスタンス化されていない）
+                            dataReadConnect.Dispose();
+                        }
+                        else
+                        {
+                            NameRichTextBox.Text = dataReader["idm"].ToString();
+                            StudentidRichTextBox.Text = dataReader["studentid"].ToString();
+                            GradeRichTextBox.Text = dataReader["grade"].ToString();
+                            dataReader.Close();
+                            dataReadConnect.Dispose();
+                            MySqlDataReader readEntryTime = null;
+                            Connector getTimeConnect = new Connector();
+                            readEntryTime = getTimeConnect.getEntryTimeTable(idm, readEntryTime);
+                            OuttimeRichTextBox.Text = readEntryTime["outtime"].ToString();
+                            IntimeRichTextBox.Text = readEntryTime["intime"].ToString();
+                            readEntryTime.Close();
+                            getTimeConnect.Dispose();
+                        }
+                    }
                 }
-                IdmRichTextBox.Text = hashStrData.ToString();
-                /*IDmから照合し、取得したデータをメインフォームに表示*/
-                DataTable dataTable = new DataTable();
-                if (Connector.userInfoDisp(dataTable, idm) == true)
+                else
                 {
-                    if (dataTable.Rows.Count != 0)
-                    {
-                        string dataName, dataStudentid, dataGrade;
-                        dataName = dataTable.Rows[0][1].ToString();
-                        dataStudentid = dataTable.Rows[0][2].ToString();
-                        dataGrade = dataTable.Rows[0][3].ToString();
-                        NameRichTextBox.Text = dataName;
-                        StudentidRichTextBox.Text = dataStudentid;
-                        GradeRichTextBox.Text = dataGrade;
-                        Connector nowTime = new Connector();
-                        DataTable getTimeDataTable = new DataTable();
-                        nowTime.getEntryTimeTable(idm, getTimeDataTable);
-                        OuttimeRichTextBox.Text = getTimeDataTable.Rows[0][1].ToString();
-                        IntimeRichTextBox.Text = getTimeDataTable.Rows[0][0].ToString();
-                    }
-                    else if (dataTable.Rows.Count == 0)
-                    {
-                        messageBoxFormat();
-                    }
-                    IDmTick.Interval = 3000;
-                    IDmTick.Start();
+                    MessageBox.Show("読み込まれたIdmは登録されていません");
                 }
+                IDmTick.Interval = 3000;
+                IDmTick.Start();
             }
         }
         /// <summary>

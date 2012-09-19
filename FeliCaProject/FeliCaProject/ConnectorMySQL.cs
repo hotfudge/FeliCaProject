@@ -5,15 +5,17 @@ using System.Text;
 using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 using System.Data;
+using System.Diagnostics;
 
 namespace connectorMySQL
 {
     /// <summary>
-    /// Mysqlの操作に関する処理をまとめたクラス
+    /// Mysqlの操作に関する処理をまとめたクラス,Connectが行われるため
+    /// メソッドの利用をしたあとは必ずDisposeしてください
     /// </summary>
-    class Connector
+    class Connector: IDisposable
     {
-        private static MySqlConnection connect;
+        private static MySqlConnection conn;
         private string tableSql;
         /// <summary>
         /// 接続を行うメソッド
@@ -24,14 +26,16 @@ namespace connectorMySQL
         public static bool Connect(string user,string password)
         {
             string connectionSting = string.Format("server={0};user id={1};password={2};database=mysql;pooling=false","localhost",user,password);
-            connect = new MySqlConnection(connectionSting);
+            conn = new MySqlConnection(connectionSting);
             try
             {
-                connect.Open();
+                conn.Open();
             }
             catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
                 return false;
             }
             return true;
@@ -44,11 +48,13 @@ namespace connectorMySQL
         {
             try
             {
-                connect.Close();
+                conn.Close();
             }
             catch(Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
             }
         }
         /// <summary>
@@ -62,7 +68,7 @@ namespace connectorMySQL
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
             string commandStr;
             if (primaryKey.Trim() != "")
@@ -73,7 +79,7 @@ namespace connectorMySQL
             {
                 commandStr = "CREATE TABLE " + tableName + "(" + columm + ");";
             }
-            MySqlCommand command = new MySqlCommand(commandStr,connect);
+            MySqlCommand command = new MySqlCommand(commandStr,conn);
             try
             {
                 command.ExecuteNonQuery();
@@ -81,13 +87,10 @@ namespace connectorMySQL
             }
             catch(Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
             }
-            finally
-            {
-                ConnectClose();
-            }
-
         }
         /// <summary>
         /// テーブルを削除するメソッド
@@ -98,10 +101,10 @@ namespace connectorMySQL
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
             tableSql = "DROP TABLE " + tableName + ";";
-            MySqlCommand command = new MySqlCommand(tableSql, connect);
+            MySqlCommand command = new MySqlCommand(tableSql, conn);
             try
             {
                 command.ExecuteNonQuery();
@@ -109,11 +112,13 @@ namespace connectorMySQL
             }
             catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
             }
             finally
             {
-                ConnectClose();
+                
             }
 
         }
@@ -129,13 +134,12 @@ namespace connectorMySQL
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
             string commandStr;
             /*文字列をINSERTする時には''で囲まなければならない*/
             commandStr = "INSERT INTO userinfo(idm,name,studentid,grade) VALUES (@idms,@names,@studentids,@grades);";
-            MessageBox.Show(commandStr);
-            MySqlCommand command = new MySqlCommand(commandStr, connect);
+            MySqlCommand command = new MySqlCommand(commandStr, conn);
             try
             {
                 AddMysqlParameter(command, "@idms", MySqlDbType.VarChar, idms);
@@ -147,10 +151,12 @@ namespace connectorMySQL
             }
             catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
             }
             commandStr = "INSERT INTO entrytime(idm) VALUES('" + idms + "');";
-            MySqlCommand commandTime = new MySqlCommand(commandStr, connect);
+            MySqlCommand commandTime = new MySqlCommand(commandStr, conn);
             try
             {
                 commandTime.ExecuteNonQuery();
@@ -158,12 +164,11 @@ namespace connectorMySQL
             }
             catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif
             }
-            finally
-            {
-                ConnectClose();
-            }
+
         }
         /// <summary>
         /// IDmからユーザを照合し、メインのフォームに個人データを表示するメソッド
@@ -171,31 +176,36 @@ namespace connectorMySQL
         /// <param name="dataTable">データベースから引き出したデータを格納するテーブル</param>
         /// <param name="idm">カードから取得したidm</param>
         /// <returns></returns>
-        public static bool userInfoDisp(DataTable dataTable,string idm)
+        public MySqlDataReader userInfoDisp(MySqlDataReader dataReader,string idm)
         {
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
-            string commandStr = "SELECT * FROM userinfo WHERE idm ='" + idm + "';";
-
+            string commandStr = "SELECT * FROM userinfo WHERE idm = @idm;";
+            MySqlCommand command = new MySqlCommand(commandStr,conn); 
             try
             {
-                MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr,connect);
-                adapt.Fill(dataTable);
+                AddMysqlParameter(command, "@idm", MySqlDbType.VarChar, idm);
             }
             catch (MySqlException ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
-                return false;
+#endif
+                return null;
             }
-            finally
+            dataReader = command.ExecuteReader();
+            if (dataReader.HasRows == false)
+            {                
+                return null;//falseのあとを実装して軽くせよ
+            }
+            else
             {
-                ConnectClose();
+                while (dataReader.Read());
             }
-            return true;
-
+            return dataReader;
         }
         /// <summary>
         /// 入退出の時間をMysqlに格納するメソッド
@@ -206,61 +216,60 @@ namespace connectorMySQL
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
             string commandStr = "SELECT * FROM entrytime WHERE idm =@idm;";
-            MySqlCommand paramCommand = new MySqlCommand(commandStr, connect);
-            DataTable dataTable = new DataTable();
+            MySqlCommand paramCommand = new MySqlCommand(commandStr, conn);
             try
             {
-                AddMysqlParameter(paramCommand, "@idms", MySqlDbType.VarChar, idm);
-                MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
-                adapt.Fill(dataTable);
+                AddMysqlParameter(paramCommand, "@idm", MySqlDbType.VarChar, idm);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
+#endif          
             }
-            if (dataTable.Rows.Count != 0)
+            MySqlDataReader dataReader = paramCommand.ExecuteReader();
+            if (dataReader.HasRows == true)
             {
-                if (dataTable.Rows[0][1].ToString().Trim() == "")
+                while (dataReader.Read());
+                //intimeの保存
+                if (dataReader["intime"].ToString().Trim() == "")
                 {
-                    commandStr = "UPDATE entrytime SET intime = now() WHERE idm = '" + idm + "';";
-                    MySqlCommand command = new MySqlCommand(commandStr, connect);
+                    dataReader.Close();
+                    commandStr = "UPDATE entrytime SET intime = now() WHERE idm = @idm;";
+                    MySqlCommand command = new MySqlCommand(commandStr, conn);
                     try
                     {
+                        AddMysqlParameter(command, "@idm", MySqlDbType.VarChar, idm);
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
+#if DEBUG
                         MessageBox.Show(ex.Message);
-                    }
-                    finally
-                    {
-                        ConnectClose();
+#endif              
                     }
                 }
-                else if (dataTable.Rows[0][1].ToString().Trim() != "" && dataTable.Rows[0][2].ToString().Trim() == "")
+                //outtimeの保存
+                else if (dataReader["intime"].ToString().Trim() != "" && dataReader["outtime"].ToString().Trim() == "")
                 {
-                    commandStr = "UPDATE entrytime SET outtime = now() WHERE idm = '" + idm + "';";
-                    MySqlCommand command = new MySqlCommand(commandStr, connect);
+                    dataReader.Close();
+                    commandStr = "UPDATE entrytime SET outtime = now() WHERE idm = @idm;";
+                    MySqlCommand command = new MySqlCommand(commandStr, conn);
                     try
                     {
+                        AddMysqlParameter(command, "@idm", MySqlDbType.VarChar, idm);
                         command.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
+#if DEBUG
                         MessageBox.Show(ex.Message);
-                    }
-                    finally
-                    {
-                        ConnectClose();
+#endif              
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show("アカウント登録がされていないカード又は読み込みエラーです");
             }
         }
         /// <summary>
@@ -271,49 +280,97 @@ namespace connectorMySQL
         public static void tableReader(string commandStr,DataTable dataTable)
         {
 
-            MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr,connect);
-            connect.ChangeDatabase("felica");
+            MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr,conn);
+            conn.ChangeDatabase("felica");
             try
             {
                 adapt.Fill(dataTable);
             }
             catch (Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                ConnectClose();
+#endif
             }
         }
         /// <summary>
-        /// INTIME・OUTTIMEをデータベースからテーブルに格納するメソッド
+        /// INTIME・OUTTIMEをデータベースから取り出すメソッド
         /// </summary>
         /// <param name="idm">カードから取得したidm</param>
         /// <param name="getTimeDataTable">データベースから取得した時間を格納するテーブル</param>
-        public void getEntryTimeTable(string idm,DataTable getTimeDataTable)
+        public MySqlDataReader getEntryTimeTable(string idm,MySqlDataReader dataReader)
         {
             bool connectBool = Connector.Connect("root", "root");
             if (connectBool)
             {
-                connect.ChangeDatabase("felica");
+                conn.ChangeDatabase("felica");
             }
-            string commandStr = "SELECT intime,outtime FROM entrytime WHERE idm = '" + idm + "';";
-            MySqlDataAdapter adapt = new MySqlDataAdapter(commandStr, connect);
+            string commandStr = "SELECT intime,outtime FROM entrytime WHERE idm = @idm;";
+            MySqlCommand command = new MySqlCommand(commandStr,conn);
             try
             {
-                adapt.Fill(getTimeDataTable);
+                AddMysqlParameter(command, "@idm", MySqlDbType.VarChar, idm);
+                dataReader = command.ExecuteReader();
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
+#if DEBUG
                 MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                ConnectClose();
+#endif
+                return null;
             }
 
+            if (dataReader.HasRows == true)
+            {
+                while (dataReader.Read()) ;
+            }
+            else
+            {
+                return null;
+            }
+            return dataReader;
         }
+
+        /// <summary>
+        /// 入力されたIdmがDB上に存在するか確認するメソッド
+        /// </summary>
+        /// <param name="idm">抽出されたidm</param>
+        /// <returns>True:存在する,False:存在しない</returns>
+        public bool checkIdmExist(string idm)
+        {
+            bool connectBool = Connector.Connect("root", "root");
+            if (connectBool)
+            {
+                conn.ChangeDatabase("felica");
+            }
+            string commandStr = "SELECT * FROM userinfo WHERE idm = @idm;";
+            MySqlCommand command = new MySqlCommand(commandStr, conn);
+            MySqlDataReader dataReader = null;
+            try
+            {
+                AddMysqlParameter(command,"@idm",MySqlDbType.VarChar,idm);
+                dataReader = command.ExecuteReader();
+            }
+            catch(Exception ex)
+            {
+#if DEBUG
+                MessageBox.Show(ex.Message);
+#endif
+                return false;
+            }
+            if (dataReader.HasRows == false)
+            {
+                return false;
+            }
+            return true;
+        }
+        /// <summary>
+        /// SQLインジェクション対策。Paramに入力された不正な値をエスケープする。
+        /// </summary>
+        /// <param name="com">Mysqlコマンド文</param>
+        /// <param name="ParameterName">プレースホルダ</param>
+        /// <param name="type">データの型</param>
+        /// <param name="value">エスケープしたい対象</param>
         public void AddMysqlParameter(
             MySqlCommand com,string ParameterName,MySqlDbType type,Object value)
         {
@@ -323,6 +380,13 @@ namespace connectorMySQL
             param.Direction = ParameterDirection.Input;
             param.Value = value;
             com.Parameters.Add(param);
+        }
+        /// <summary>
+        /// Disposeインターフェイスの実装
+        /// </summary>
+        public void Dispose()
+        {
+            ConnectClose();
         }
 
     }
